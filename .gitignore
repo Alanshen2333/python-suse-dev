@@ -1,0 +1,16 @@
+# macOS
+.DS_Store
+
+# 日志 / 临时
+*.log
+*.tmp
+
+# 本地环境变量 / 密钥
+.env
+.env.*
+*.pem
+id_*
+authorized_keys
+
+# Docker 构建产物
+.docker/
