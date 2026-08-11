@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **base** (`ghcr.io/alanshen2333/python-suse-dev:16.0`)：Python 3.13 + uv + 网络工具 + docker CLI(DooD) + fish/nvim 预配置 + sshd(仅密钥登录)
 - **code** (`ghcr.io/alanshen2333/python-suse-dev-code:16.0`)：base 之上加 code-server Web IDE
 
-CI：`.github/workflows/docker.yml`，nightly + 手动 + main 分支相关文件变更时构建推送 GHCR（多架构 amd64/arm64）。注意 GHCR tag 必须全小写，`github.repository_owner` 含大写会直接 buildx 报错，所以镜像名硬编码小写。
+CI：`.github/workflows/docker.yml`，**仅手动触发**（workflow_dispatch）构建推送 GHCR（多架构 amd64/arm64）。注意 GHCR tag 必须全小写，`github.repository_owner` 含大写会直接 buildx 报错，所以镜像名硬编码小写。
 
 ## 常用命令
 

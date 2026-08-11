@@ -1,18 +1,8 @@
 name: Build and Push Images
 
-# 触发：每天 nightly 构建 + 手动 + 推送 main 分支（Dockerfile/entrypoint/fish 变更时）
+# 触发：仅手动（Actions 页面 Run workflow 或 gh workflow run）
 on:
-  schedule:
-    # UTC 18:17 ≈ 北京时间 02:17，避开整点峰；早上可用
-    - cron: '17 18 * * *'
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - 'Dockerfile'
-      - 'entrypoint.sh'
-      - 'fish/**'
-      - '.github/workflows/docker.yml'
 
 env:
   REGISTRY: ghcr.io
