@@ -16,8 +16,8 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_BASE: ghcr.io/${{ github.repository_owner }}/python-suse-dev
-  IMAGE_CODE: ghcr.io/${{ github.repository_owner }}/python-suse-dev-code
+  IMAGE_BASE: ghcr.io/alanshen2333/python-suse-dev
+  IMAGE_CODE: ghcr.io/alanshen2333/python-suse-dev-code
 
 jobs:
   build:
