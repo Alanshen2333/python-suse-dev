@@ -4,8 +4,8 @@
 # 关掉默认欢迎语
 set -g fish_greeting ""
 
-# PATH：uv、go、用户本地 bin
-fish_add_path -g /root/.local/bin /root/go/bin /usr/local/go/bin
+# PATH：uv（/usr/local/bin，系统级）、go、用户本地 bin
+fish_add_path -g /home/dev/.local/bin /home/dev/go/bin /usr/local/go/bin
 
 # 默认编辑器 / 分页器
 set -gx EDITOR nvim

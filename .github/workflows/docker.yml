@@ -1,0 +1,69 @@
+name: Build and Push Images
+
+# 触发：每天 nightly 构建 + 手动 + 推送 main 分支（Dockerfile/entrypoint/fish 变更时）
+on:
+  schedule:
+    # UTC 18:17 ≈ 北京时间 02:17，避开整点峰；早上可用
+    - cron: '17 18 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'Dockerfile'
+      - 'entrypoint.sh'
+      - 'fish/**'
+      - '.github/workflows/docker.yml'
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_BASE: ghcr.io/${{ github.repository_owner }}/python-suse-dev
+  IMAGE_CODE: ghcr.io/${{ github.repository_owner }}/python-suse-dev-code
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      # 多架构构建需要 QEMU 模拟 arm64（runner 原生 amd64）
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # base 镜像（多架构，滚动 tag :16.0）
+      - name: Build and push base image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          target: base
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ env.IMAGE_BASE }}:16.0
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # code 镜像（base + code-server；gha cache 复用 base 层避免重跑）
+      - name: Build and push code image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          target: code
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ env.IMAGE_CODE }}:16.0
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
