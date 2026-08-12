@@ -1,0 +1,8 @@
+# git 默认配置 -- python-suse-dev 镜像
+# Windows 宿主兼容：提交时 CRLF→LF（autocrlf=input），检出保持 LF（eol=lf）
+# 避免 Windows 侧写出的 CRLF 污染 git diff/status 或混入仓库
+
+[core]
+	autocrlf = input
+	eol = lf
+	attributesfile = /home/dev/.gitattributes

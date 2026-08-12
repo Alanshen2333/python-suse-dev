@@ -50,6 +50,9 @@ RUN useradd -m -u 1000 -s /usr/bin/fish -G docker dev && \
 USER dev
 # fish 配置
 COPY --chown=dev:dev fish/config.fish /home/dev/.config/fish/config.fish
+# git 默认配置：Windows 宿主兼容，CRLF→LF 归一（autocrlf=input + 全局 .gitattributes）
+COPY --chown=dev:dev git/gitconfig /home/dev/.gitconfig
+COPY --chown=dev:dev git/gitattributes /home/dev/.gitattributes
 # starship 提示符：no-nerd-font 预设，浏览器终端也能正常显示
 RUN starship preset no-nerd-font -o /home/dev/.config/starship.toml
 # fisher + 插件（autopair 自动补全括号、fzf.fish 模糊查找）

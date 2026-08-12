@@ -58,6 +58,9 @@ ssh -p 2222 -L 8080:127.0.0.1:8080 dev@localhost   # 然后浏览器开 localhos
 ### zypper 源不稳定 —— 重试循环别删
 Leap 16 的 `cdn.opensuse.org` 镜像同步经常 403/404。Dockerfile 里 `sed` 把源切到 `https://download.opensuse.org` + 8 次重试（每次 10s + 重新 refresh）。这是构建能成功的关键，**不要为了"精简"把它删掉**。
 
+### git 行尾策略（Windows 宿主兼容）
+`git/gitconfig` + `git/gitattributes` 构建期 COPY 进 dev 用户家目录（`~/.gitconfig` + `~/.gitattributes`）。核心配置：`core.autocrlf = input`（提交 CRLF→LF 归一）+ 全局 `* text=auto eol=lf`（检出强制 LF）。效果：Windows 侧写出的 CRLF 不污染 status/diff、不混入仓库；二进制文件不受影响（text=auto 先检测）；仓库自带 .gitattributes 优先于全局默认。**改配置时注意三个文件联动**：`git/gitconfig`、`git/gitattributes`、`Dockerfile` 里的 COPY。
+
 ### fish / nvim 在构建期完全预配置（非运行时），且都是 dev 用户的
 - **nvim**：配置在 `/home/dev/.config/nvim`。克隆 LazyVim starter 去掉 `.git`；Python extra 写进 `lazyvim.json`；构建期 `nvim --headless` 跑 `Lazy! sync` + `MasonInstall pyright ruff`（带 `timeout 900` 和失败回退提示）。
 - **fish**：`/home/dev/.config/fish/config.fish`；fisher + autopair.fish + fzf.fish 构建期装好；starship 用 `no-nerd-font` 预设。

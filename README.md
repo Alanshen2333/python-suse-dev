@@ -57,6 +57,16 @@ ssh -p 2222 -L 8080:127.0.0.1:8080 dev@localhost
 
 工作目录 `/workspace`（dev 用户所有）。日常用 `uv` 管 Python 项目。
 
+## Windows 宿主（CRLF 行尾）兼容
+
+容器内 git 已做行尾归一（dev 用户 `~/.gitconfig` + 全局 `~/.gitattributes`）：
+
+- **提交时 CRLF → LF 存储**（`core.autocrlf = input`），Windows 侧写出的 CRLF 不会混入仓库
+- **检出强制 LF**（`eol=lf`），容器内打开/编辑永远是 LF，`git status`/`git diff` 不会被行尾噪音污染
+- **二进制文件不受影响**（`text=auto` 先做二进制检测），仓库自带的 `.gitattributes` 优先于全局默认
+
+> 已被 CRLF 污染的历史仓库，可用 `git add --renormalize . && git commit` 一次性清洗。
+
 ## ⚠️ DooD 安全警告
 
 挂载 `/var/run/docker.sock` 等于把宿主机 root 权限交给容器 —— 容器内 `docker` 命令操作的是**宿主机** daemon。**仅限本地开发使用**，不要在不可信环境这样跑。不需要 docker 的话去掉该挂载即可。
@@ -83,7 +93,7 @@ docker build --target code -t python-suse-dev-code:16.0 .       # code
 
 ## CI
 
-GitHub Actions 每天 nightly（北京时间约 02:17）+ 手动触发 + main 分支相关文件变更时自动构建推送 GHCR，多架构。
+GitHub Actions **仅手动触发**（Actions 页面 Run workflow 或 `gh workflow run`）构建推送 GHCR，多架构。
 
 ## 注意
 
